@@ -1,0 +1,40 @@
+<Publish>
+	<!--Id must be set in order to update existed mod. Copy it here from the "Mod published with Id=..." line after the first publish-->
+	<ModId Value="" />
+	<!--Name of the mod to display to players-->
+	<DisplayName Value="Infinite Zone Demand" />
+	<!--Short description of the mod (max 200 characters)-->
+	<ShortDescription Value="Keeps residential, commercial, industrial and office demand maxed so zoned buildings keep growing. Toggle each zone type in Options." />
+	<!--Long description of the mod. Multi-line text must start at column 0-->
+	<LongDescription>
+Keeps zone demand at maximum so your zoned lots keep filling with buildings.
+
+**What it does**
+- Fills the demand bars for low, medium and high density residential, commercial, industrial and office zones.
+- Also raises the per-product demand the game uses to pick which shop, factory or office to build. Mods that only fill the bars leave commercial and industrial zones empty; this one makes them grow.
+- Keeps household demand up so new homes get residents.
+- Optional: warehouses, and a "build anywhere" switch that uses the game's built-in fast-spawn mode to ignore location and demand.
+
+**Settings**
+Options > Infinite Zone Demand. Every zone type can be switched on or off while playing; switching one off returns it to normal demand within a few seconds.
+
+**Notes**
+- No Harmony patches. Safe to remove at any time; demand goes back to normal on the next simulation update.
+- Buildings still need workers, customers and services to thrive. Forced growth can mean more empty or struggling businesses than a normal city.
+- Not compatible with other mods that override demand (e.g. Super Fast Building And Leveling's demand sliders, Unlimited Demand).
+	</LongDescription>
+	<!--Thumbnail-->
+	<Thumbnail Value="Properties/Thumbnail.png" />
+	<!--Tag, can be set multiple times-->
+	<Tag Value="Code Mod" />
+	<!--Version of the mod-->
+	<ModVersion Value="1.0.0" />
+	<!--Recommended version of the base game to use the mod-->
+	<GameVersion Value="1.6.*" />
+	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
+	<ChangeLog Value="Initial release." />
+	<!--External link, can be set multiple times-->
+	<ExternalLink Type="github" Url="https://github.com/sammcneil29/cs2-infinite-zone-demand" />
+	<!--Supported values Public, Private, Unlisted-->
+	<AccessLevel Value="Public" />
+</Publish>
