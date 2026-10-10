@@ -7,9 +7,44 @@
 		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<CSIIToolPath>$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))</CSIIToolPath>
+		<UseModToolchain Condition="'$(CSIIToolPath)' != '' And Exists('$(CSIIToolPath)\Mod.props')">true</UseModToolchain>
+	</PropertyGroup>
+
 	<!--Imports must be after PropertyGroup block. CSII_TOOLPATH is set when the Modding Toolchain is installed from the game's Options > Modding-->
-	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.props" />
-	<Import Project="$([System.Environment]::GetEnvironmentVariable('CSII_TOOLPATH', 'EnvironmentVariableTarget.User'))\Mod.targets" />
+	<Import Project="$(CSIIToolPath)\Mod.props" Condition="'$(UseModToolchain)' == 'true'" />
+	<Import Project="$(CSIIToolPath)\Mod.targets" Condition="'$(UseModToolchain)' == 'true'" />
+
+	<!--Fallback without the toolchain: this mod uses no Entities source generators or Burst jobs, so it can be
+	compiled straight against the game's managed assemblies and copied to the local Mods folder.-->
+	<PropertyGroup Condition="'$(UseModToolchain)' != 'true'">
+		<OutputType>Library</OutputType>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>9.0</LangVersion>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Cities Skylines II</GamePath>
+		<ManagedPath Condition="'$(ManagedPath)' == ''">$(GamePath)\Cities2_Data\Managed</ManagedPath>
+		<AssemblySearchPaths>$(AssemblySearchPaths);$(ManagedPath)</AssemblySearchPaths>
+		<DeployDir>$(LOCALAPPDATA)Low\Colossal Order\Cities Skylines II\Mods\$(MSBuildProjectName)</DeployDir>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(UseModToolchain)' != 'true'">
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+	</ItemGroup>
+
+	<Target Name="CheckGamePath" BeforeTargets="ResolveReferences" Condition="'$(UseModToolchain)' != 'true'">
+		<Error Condition="!Exists('$(ManagedPath)\Game.dll')" Text="Game.dll not found in '$(ManagedPath)'. Install the Modding Toolchain in-game, or pass -p:GamePath=&quot;X:\...\Cities Skylines II&quot;." />
+	</Target>
+
+	<Target Name="DeployLocalMod" AfterTargets="Build" Condition="'$(UseModToolchain)' != 'true'">
+		<ItemGroup>
+			<FilesToDeploy Include="$(OutDir)**\*.*" />
+		</ItemGroup>
+		<RemoveDir Directories="$(DeployDir)" />
+		<Copy SourceFiles="@(FilesToDeploy)" DestinationFiles="@(FilesToDeploy->'$(DeployDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Message Importance="high" Text="Deployed to $(DeployDir)" />
+	</Target>
 
 	<ItemGroup>
 		<Reference Include="Game">
@@ -68,7 +103,7 @@
 		</Reference>
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(UseModToolchain)' == 'true'">
 		<None Include="$(ModPropsFile)" Link="Properties\Mod.props" />
 		<None Include="$(ModTargetsFile)" Link="Properties\Mod.targets" />
 	</ItemGroup>
