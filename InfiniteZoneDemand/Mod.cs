@@ -12,7 +12,7 @@ namespace InfiniteZoneDemand
     {
         public static ILog log = LogManager.GetLogger($"{nameof(InfiniteZoneDemand)}.{nameof(Mod)}").SetShowsErrorsInUI(false);
 
-        /// <summary>Live settings instance, read by <see cref="InfiniteDemandSystem"/> every update.</summary>
+        /// <summary>Live settings instance, read by the Force* systems every update.</summary>
         public static Setting Settings { get; private set; }
 
         public void OnLoad(UpdateSystem updateSystem)
@@ -27,9 +27,12 @@ namespace InfiniteZoneDemand
             GameManager.instance.localizationManager.AddSource("en-US", new LocaleEN(Settings));
             AssetDatabase.global.LoadSettings(nameof(InfiniteZoneDemand), Settings, new Setting(this));
 
-            // Runs in the same 16-frame slot as ZoneSpawnSystem (it inherits the spawner's update
-            // offset because it has the same interval and no offset of its own), immediately before it.
-            updateSystem.UpdateBefore<InfiniteDemandSystem, ZoneSpawnSystem>(SystemUpdatePhase.GameSimulation);
+            // Each system runs in the same 16-frame slot as the game system that reads the values it forces
+            // (it inherits that system's update offset), immediately before it. See ForceDemandSystemBase.
+            updateSystem.UpdateBefore<ForceBuildingDemandSystem, ZoneSpawnSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateBefore<ForceHouseholdDemandSystem, HouseholdSpawnSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateBefore<ForceCommercialCompanyDemandSystem, CommercialSpawnSystem>(SystemUpdatePhase.GameSimulation);
+            updateSystem.UpdateBefore<ForceIndustrialCompanyDemandSystem, IndustrialSpawnSystem>(SystemUpdatePhase.GameSimulation);
         }
 
         public void OnDispose()

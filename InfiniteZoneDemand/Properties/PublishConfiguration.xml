@@ -12,7 +12,7 @@ Keeps zone demand at maximum so your zoned lots keep filling with buildings.
 **What it does**
 - Fills the demand bars for low, medium and high density residential, commercial, industrial and office zones.
 - Also raises the per-product demand the game uses to pick which shop, factory or office to build. Mods that only fill the bars leave commercial and industrial zones empty; this one makes them grow.
-- Keeps household demand up so new homes get residents.
+- Fills the new buildings: brings in households faster while homes stand empty, and keeps shops, factories and offices arriving while business buildings stand empty. Both stop on their own once buildings are full, so no homeless crowds or endless company queues.
 - Optional: warehouses, and a "build anywhere" switch that uses the game's built-in fast-spawn mode to ignore location and demand.
 
 **Settings**
